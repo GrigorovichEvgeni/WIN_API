@@ -1,9 +1,9 @@
-// Файл WINDOWS.H содержит определения, макросы, и структуры 
-// которые используются при написании приложений под Windows. 
 #include <windows.h>
 #include <tchar.h>
 
-//прототип оконной процедуры
+int LBD = 0;
+int MBD = 0;
+int RBD = 0;
 LRESULT CALLBACK WindowProc(HWND, UINT, WPARAM, LPARAM);
 
 TCHAR szClassWindow[] = TEXT("Каркасное приложение"); /* Имя класса окна */
@@ -13,8 +13,6 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 	HWND hWnd;
 	MSG lpMsg;
 	WNDCLASSEX wcl;
-
-	/* 1. Определение класса окна  */
 
 	wcl.cbSize = sizeof(wcl);	// размер структуры WNDCLASSEX 
 	wcl.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;	// окно сможет получать сообщения о двойном щелчке (DBLCLK)
@@ -30,13 +28,8 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 	wcl.hIconSm = NULL;	// отсутствие маленькой иконки для связи с классом окна
 
 
-	/*  2. Регистрация класса окна  */
-
 	if (!RegisterClassEx(&wcl))
 		return 0;	// при неудачной регистрации - выход
-
-
-	/*  3. Создание окна  */
 
 	// создается окно и  переменной hWnd присваивается дескриптор окна
 	hWnd = CreateWindowEx(
@@ -55,14 +48,8 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 		hInst,		// идентификатор приложения, создавшего окно
 		NULL);		// указатель на область данных приложения
 
-
-	/* 4. Отображение окна */
-
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);	// перерисовка окна
-
-
-	/* 5. Запуск цикла обработки сообщений  */
 
 	// получение очередного сообщения из очереди сообщений
 	while (GetMessage(&lpMsg, NULL, 0, 0))
@@ -73,46 +60,32 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int 
 	return lpMsg.wParam;
 }
 
-
-// Оконная процедура вызывается операционной системой и получает в качестве 
-// параметров сообщения из очереди сообщений данного приложения	
-
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMessage, WPARAM wParam, LPARAM lParam)
 {
 	TCHAR str[50];
-	int LBD = 0;
-	int MBD = 0;
-	int RBD = 0;
+	
 	switch (uMessage)
 	{
 	case WM_LBUTTONDOWN:
-	
 		++LBD;
-		
 		break;
 	case WM_MBUTTONDOWN:
-		
 		++MBD;
 		break;
 	case WM_RBUTTONDOWN:
-	
-			
 		++RBD;
 		break;
-	
-	
+
 	case WM_DESTROY: // сообщение о завершении программы
 		PostQuitMessage(0);	// посылка сообщения WM_QUIT
 		break;
 	default:
-		// все сообщения, которые не обрабатываются в данной оконной 
-		// функции направляются обратно Windows на обработку по умолчанию
+	
 		return DefWindowProc(hWnd, uMessage, wParam, lParam);
 	}
-	int L =0;
-	L+= LBD;
-		wsprintf(str, TEXT("LBD=%d  MBD=%d RBD=%d"), L, MBD, RBD); // текущие координаты курсора мыши
-		SetWindowText(hWnd, str);	// строка выводится в заголовок окна
+
+		wsprintf(str, TEXT("LBD=%d  MBD=%d RBD=%d"), L, MBD, RBD); 
+		SetWindowText(hWnd, str);	
 		
 	return 0;
 }
